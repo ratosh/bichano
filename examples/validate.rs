@@ -82,7 +82,7 @@ impl Visitor for Validator {
 fn main() -> io::Result<()> {
     let mut success = true;
 
-    let arg = "G:\\chess\\epds\\test.pgn";
+    let arg = "test.pgn";
     let file = File::open(&arg)?;
     let mut reader = BufferedReader::new(file);
 
