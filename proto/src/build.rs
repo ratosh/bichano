@@ -5,6 +5,12 @@ use protoc_rust::Customize;
 use std::io;
 
 fn main() -> io::Result<()> {
+    // protoc_rust::Codegen::new()
+    //     .out_dir("src/protos")
+    //     .inputs(&["src/protos/training_chunk.proto"])
+    //     .include("protos")
+    //     .run()
+    // .expect("Running protoc failed.");
     protoc_rust::run(protoc_rust::Args {
         out_dir: "src/protos",
         input: &["src/protos/training_chunk.proto"],
@@ -13,6 +19,6 @@ fn main() -> io::Result<()> {
             ..Default::default()
         },
     })
-        .expect("protoc");
+        .expect("Running protoc failed.");
     Ok(())
 }
