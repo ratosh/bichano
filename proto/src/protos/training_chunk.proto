@@ -1,35 +1,42 @@
 package protos;
 
-message Board {
-  repeated uint64 plane = 1;
-}
 
-message Policy {
-  required uint32 move_index = 1;
-  required float value = 2;
-}
-
-message Position {
-  required Board board = 1;
-  repeated Policy policy = 2;
-}
-
-message Game {
-  enum Result {
-    WHITE = 0;
-    BLACK = 1;
-    DRAW = 2;
-  }
-
-  repeated Position board = 1;
-  optional Result result = 2;
-}
-
-message Chunk {
+message BoardChunk {
   enum EncodingType {
     SIMPLE = 0;
   }
 
-  optional EncodingType version = 1;
-  repeated Game game = 2;
+  required EncodingType version = 1;
+  repeated uint64 plane = 2;
+}
+
+message PolicyChunk {
+  required uint32 move_index = 1;
+  required float value = 2;
+}
+
+message PositionChunk {
+
+  enum PolicyEncodingType {
+    SIMPLE = 0;
+  }
+
+  required PolicyEncodingType version = 1;
+  required BoardChunk board = 2;
+  repeated PolicyChunk policy = 3;
+}
+
+message GameChunk {
+  repeated PositionChunk board = 1;
+  optional ResultChunk result = 2;
+}
+
+enum ResultChunk {
+  WHITE = 0;
+  BLACK = 1;
+  DRAW = 2;
+}
+
+message Chunk {
+  repeated GameChunk game = 1;
 }

@@ -7,5 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-shakmaty = "0.15"
+proto = {path = "../proto"}
+shakmaty = "0.16"
 pgn-reader = {path = "../rust-pgn-reader"}
+protobuf = "2"
