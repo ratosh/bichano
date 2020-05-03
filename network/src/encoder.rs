@@ -1,10 +1,10 @@
 use std::mem;
 
 use pgn_reader::{Outcome, RawHeader, San, SanPlus, Skip, Visitor};
-use shakmaty::{Chess, Color, Position, Move};
+use shakmaty::{Chess, Color, Position, Move, Setup};
 use shakmaty::fen::Fen;
 
-use proto::protos::training_chunk::{BoardChunk, GameChunk, ResultChunk, PositionChunk, PolicyChunk, PositionChunk_PolicyEncodingType, BoardChunk_EncodingType};
+use proto::protos::training_chunk::{BoardChunk, GameChunk, ResultChunk, PositionChunk, PolicyChunk, PositionChunk_PolicyEncodingType, BoardChunk_EncodingType, Chunk};
 
 pub struct SimpleBoardEncoder {
 }
@@ -82,6 +82,8 @@ enum LoadStep {
     Result,
 }
 
+
+#[derive(Clone)]
 pub struct Game {
     pub position: Chess,
     pub moves: Vec<San>,
@@ -145,6 +147,7 @@ impl Visitor for GameLoader {
                 }
             };
         }
+        self.step = LoadStep::Position;
     }
 
     fn end_headers(&mut self) -> Skip {
@@ -180,12 +183,14 @@ impl Visitor for GameLoader {
 
 
 pub trait GameEncoder {
-    fn encode(&self, game: &Game, position_encoder: &impl BoardEncoder) -> GameChunk;
+    fn encode_move(&self, m: &Move, moving_color: Color) -> u32;
+    fn encode(&self, game: &Game, board_encoder: &impl BoardEncoder) -> GameChunk;
 }
 
 pub struct SimpleGameEncoder {
 
 }
+
 impl Default for SimpleGameEncoder {
     fn default() -> Self {
         Self {
@@ -205,17 +210,34 @@ fn convert_outcome(outcome: Outcome) -> ResultChunk {
     }
 }
 
-pub trait MoveIndex {
-    fn move_index(&self) -> u32;
-}
-
-impl MoveIndex for Move {
-    fn move_index(&self) -> u32 {
-        0
-    }
-}
-
 impl GameEncoder for SimpleGameEncoder {
+
+    fn encode_move(&self, m: &Move, moving_color: Color) -> u32 {
+        let (from, to, promotion) = match *m {
+            Move::EnPassant {from, to} => {
+                (from, to, None)
+            },
+            Move::Castle {king, rook} => {
+                (king, rook, None)
+            },
+            Move::Normal { role: _, from, capture: _, to, promotion } => {
+                (from, to, promotion)
+            },
+            _ => {
+                panic!("Invalid move")
+            }
+        };
+        let promotion_index = if let Some(role) = promotion {
+            u32::from(role) << 12
+        } else {
+            0
+        };
+        return if moving_color == Color::White {
+            u32::from(from) + (u32::from(to) << 6) + promotion_index
+        } else {
+            u32::from(from.flip_vertical()) + u32::from(to.flip_vertical()) + promotion_index
+        }
+    }
 
     fn encode(&self, game: &Game, board_encoder: &impl BoardEncoder) -> GameChunk {
         let mut position = game.position.clone();
@@ -223,14 +245,15 @@ impl GameEncoder for SimpleGameEncoder {
 
         for san_move in game.moves.iter() {
             let parsed_move = san_move.to_move(&position).expect("Failed to parse move");
-            position.play_unchecked(&parsed_move);
+            let moving_color = position.turn();
 
             let mut policies: Vec<PolicyChunk> = Vec::new();
             let mut policy_chunk = PolicyChunk::new();
             policy_chunk.set_value(1.0);
-            policy_chunk.set_move_index(parsed_move.move_index());
+            policy_chunk.set_move_index(self.encode_move(&parsed_move, moving_color));
             policies.push(policy_chunk);
 
+            position.play_unchecked(&parsed_move);
             let board_chunk = board_encoder.encode(&position);
 
             let mut position_chunk = PositionChunk::new();
@@ -251,3 +274,38 @@ impl GameEncoder for SimpleGameEncoder {
     }
 }
 
+pub struct ChunkEncoder {
+    games: Vec<Game>,
+    games_per_chunk: usize,
+}
+
+impl Default for ChunkEncoder {
+    fn default() -> Self {
+        Self {
+            games: Vec::with_capacity(100),
+            games_per_chunk: 100
+        }
+    }
+}
+
+impl ChunkEncoder {
+
+    pub fn encode(&mut self, game_encoder: &impl GameEncoder, board_encoder: &impl BoardEncoder) -> Option<Chunk> {
+        if self.games.is_empty() {
+            return None
+        }
+        let mut games : Vec<GameChunk> = Vec::with_capacity(self.games.len());
+        for game in self.games.iter() {
+            games.push(game_encoder.encode(game, board_encoder));
+        }
+        self.games.clear();
+        let mut chunk = Chunk::new();
+        chunk.set_games(games.into());
+        Some(chunk)
+    }
+
+    pub fn push(&mut self, game: &Game) -> bool {
+        self.games.push(game.clone());
+        self.games.len() > self.games_per_chunk
+    }
+}

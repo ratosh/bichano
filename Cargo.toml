@@ -11,3 +11,4 @@ proto = {path = "proto"}
 network = {path= "network"}
 pgn-reader = {path = "rust-pgn-reader"}
 protobuf = { version = "2", features = ["with-bytes"] }
+glob = "0.3.0"
