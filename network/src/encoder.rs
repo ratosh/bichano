@@ -1,30 +1,26 @@
 use std::mem;
 
-use pgn_reader::{BufferedReader, Outcome, RawHeader, San, SanPlus, Skip, Visitor};
+use pgn_reader::{Outcome, RawHeader, San, SanPlus, Skip, Visitor};
 use shakmaty::{Chess, Color, Position, Move};
 use shakmaty::fen::Fen;
 
-use proto::protos::training_chunk::{BoardChunk, GameChunk, ResultChunk, PositionChunk, PolicyChunk, PositionChunk_PolicyEncodingType};
+use proto::protos::training_chunk::{BoardChunk, GameChunk, ResultChunk, PositionChunk, PolicyChunk, PositionChunk_PolicyEncodingType, BoardChunk_EncodingType};
 
-pub struct SimplePositionEncoder {}
+pub struct SimpleBoardEncoder {
+}
 
-impl Default for SimplePositionEncoder {
+impl Default for SimpleBoardEncoder {
     fn default() -> Self {
         Self {
-
         }
     }
 }
 
-pub trait PositionEncoder {
-    fn encode_type(&self) -> PositionChunk_PolicyEncodingType;
-    fn encode(&self, position: &dyn Position) -> Vec<u64>;
+pub trait BoardEncoder {
+    fn encode(&self, position: &dyn Position) -> BoardChunk;
 }
 
-impl PositionEncoder for SimplePositionEncoder {
-    fn encode_type(&self) -> PositionChunk_PolicyEncodingType {
-        PositionChunk_PolicyEncodingType::SIMPLE
-    }
+impl BoardEncoder for SimpleBoardEncoder {
 
     /// 0 - white
     /// 1 - black
@@ -36,7 +32,7 @@ impl PositionEncoder for SimplePositionEncoder {
     /// 7 - kings
     /// 8 - ep square -- Should map impossible EP?
     /// 9 - castling
-    fn encode(&self, position: &dyn Position) -> Vec<u64> {
+    fn encode(&self, position: &dyn Position) -> BoardChunk {
         let mut res = Vec::with_capacity(10);
         let color_us = position.turn();
         match color_us {
@@ -70,7 +66,11 @@ impl PositionEncoder for SimplePositionEncoder {
             }
         }
 
-        res
+        let mut board_chunk = BoardChunk::new();
+        board_chunk.set_planes(res.into());
+        board_chunk.set_encoding(BoardChunk_EncodingType::SIMPLE);
+
+        board_chunk
     }
 }
 
@@ -102,7 +102,6 @@ pub struct GameLoader {
     index: usize,
     game: Game,
     step: LoadStep,
-    success: bool,
 }
 
 impl Default for GameLoader {
@@ -111,7 +110,6 @@ impl Default for GameLoader {
             index: 0,
             game: Game::default(),
             step: LoadStep::Header,
-            success: true,
         }
     }
 }
@@ -181,11 +179,19 @@ impl Visitor for GameLoader {
 }
 
 
-trait GameEncoder {
-    fn encode(game: &Game, position_encoder: &impl PositionEncoder) -> GameChunk;
+pub trait GameEncoder {
+    fn encode(&self, game: &Game, position_encoder: &impl BoardEncoder) -> GameChunk;
 }
 
-struct SimpleGameEncoder {}
+pub struct SimpleGameEncoder {
+
+}
+impl Default for SimpleGameEncoder {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
 
 fn convert_outcome(outcome: Outcome) -> ResultChunk {
     match outcome {
@@ -210,9 +216,10 @@ impl MoveIndex for Move {
 }
 
 impl GameEncoder for SimpleGameEncoder {
-    fn encode(game: &Game, position_encoder: &impl PositionEncoder) -> GameChunk {
+
+    fn encode(&self, game: &Game, board_encoder: &impl BoardEncoder) -> GameChunk {
         let mut position = game.position.clone();
-        let mut board: Vec<PositionChunk> = Vec::new();
+        let mut positions: Vec<PositionChunk> = Vec::new();
 
         for san_move in game.moves.iter() {
             let parsed_move = san_move.to_move(&position).expect("Failed to parse move");
@@ -222,22 +229,25 @@ impl GameEncoder for SimpleGameEncoder {
             let mut policy_chunk = PolicyChunk::new();
             policy_chunk.set_value(1.0);
             policy_chunk.set_move_index(parsed_move.move_index());
+            policies.push(policy_chunk);
 
-            let mut board_chunk = BoardChunk::new();
-            board_chunk.set_plane(position_encoder.encode(&position));
+            let board_chunk = board_encoder.encode(&position);
 
             let mut position_chunk = PositionChunk::new();
             position_chunk.set_policy(policies.into());
             position_chunk.set_board(board_chunk);
+            position_chunk.set_encoding(PositionChunk_PolicyEncodingType::SIMPLE);
+
+            positions.push(position_chunk);
         }
-        let mut response = GameChunk::new();
-        response.set_board(board.into());
+        let mut game_chunk = GameChunk::new();
+        game_chunk.set_positions(positions.into());
         match game.result {
-            Some(outcome) => response.set_result(convert_outcome(outcome)),
+            Some(outcome) => game_chunk.set_result(convert_outcome(outcome)),
             _ => {}
         };
 
-        response
+        game_chunk
     }
 }
 

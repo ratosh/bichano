@@ -16,6 +16,8 @@ fn main() -> io::Result<()> {
         input: &["src/protos/training_chunk.proto"],
         includes: &["src/protos"],
         customize: Customize {
+            carllerche_bytes_for_bytes: Some(true),
+            carllerche_bytes_for_string: Some(true),
             ..Default::default()
         },
     })

@@ -1,13 +1,12 @@
 package protos;
 
-
 message BoardChunk {
   enum EncodingType {
     SIMPLE = 0;
   }
 
-  required EncodingType version = 1;
-  repeated uint64 plane = 2;
+  required EncodingType encoding = 1;
+  repeated uint64 planes = 2;
 }
 
 message PolicyChunk {
@@ -21,13 +20,13 @@ message PositionChunk {
     SIMPLE = 0;
   }
 
-  required PolicyEncodingType version = 1;
+  required PolicyEncodingType encoding = 1;
   required BoardChunk board = 2;
   repeated PolicyChunk policy = 3;
 }
 
 message GameChunk {
-  repeated PositionChunk board = 1;
+  repeated PositionChunk positions = 1;
   optional ResultChunk result = 2;
 }
 

@@ -10,3 +10,4 @@ edition = "2018"
 proto = {path = "proto"}
 network = {path= "network"}
 pgn-reader = {path = "rust-pgn-reader"}
+protobuf = { version = "2", features = ["with-bytes"] }
