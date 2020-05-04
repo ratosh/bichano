@@ -4,15 +4,13 @@ use network::encoder::{SimpleGameEncoder, GameLoader, SimpleBoardEncoder, ChunkE
 use std::fs::File;
 use protobuf::{Message};
 use std::io::Write;
-use rand::Rng;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 use glob::glob;
 use pgn_reader::BufferedReader;
 use std::fs;
 
 fn main() {
-    let path = "H:\\nn\\ccrl-pgn\\cclr";
+    let path = "D:\\nn\\ccrl-pgn\\cclr";
     let input_files = format!("{}\\**\\*.pgn", path);
     let mut input_counter = 0;
 
