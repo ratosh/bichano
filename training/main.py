@@ -4,39 +4,8 @@ import glob
 import random
 import os
 
-
-class TrainingConfig:
-
-    # name: 'name'
-    # gpu: 0
-    # training:
-    #   train_test_ratio: 0.8
-    #   batch_size: 1024
-    #   input: 'D:\nn\ccrl\*\'
-    #   output: 'D:\nn\training\'
-    #   steps: 100000
-    #   learning_rate:
-    #       - 0.01
-    #       - 0.001
-    #       - 0.0001
-    #   learning_rate_bounds:
-    #       - 50000
-    #       - 80000
-    # model:
-    #   filters: 64
-    #   blocks: 6
-    # ...
-    def __init__(self, cfg):
-        self.gpu = cfg['gpu']
-        self.train_ratio = cfg['training'].get('train_test_ratio', 0.8)
-        self.batch_size = cfg['training'].get('batch_size', 1024)
-        self.input = cfg['training']['input']
-        self.output = os.path.join(cfg['training']['output'], cfg['name'])
-        self.steps = cfg['training'].get('steps', 100000)
-        self.lr = cfg['training'].get('learning_rate', [0.01, 0.001, 0.0001])
-        self.lr_bounds = cfg['training'].get('learning_rate_bounds', [50000, 70000])
-        self.filters = cfg['model'].get('filters', 64)
-        self.blocks = cfg['training'].get('blocks', 6)
+from training_chunk_pb2 import Chunk
+from training_config import TrainingConfig
 
 
 def get_chunks(data_prefix):
@@ -48,7 +17,7 @@ def get_all_chunks(path):
     for d in glob.glob(path):
         chunks += get_chunks(d)
     random.shuffle(chunks)
-    pass
+    return chunks
 
 
 def train(args):
@@ -56,9 +25,21 @@ def train(args):
     print(yaml.dump(yaml_file, default_flow_style=False))
     cfg = TrainingConfig(yaml_file)
 
-    root_dir = cfg.output
-    if not os.path.exists(root_dir):
-        os.makedirs(root_dir)
+    output_dir = cfg.output
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    chunks = get_all_chunks(cfg.input)
+    print("Found {} chunk files".format(len(chunks)))
+    num_train_chunks = int(len(chunks) * cfg.train_ratio)
+    training_chunks = chunks[:num_train_chunks]
+    test_chunks = chunks[num_train_chunks:]
+
+    in_file = open(training_chunks[0], "rb")
+    training_chunk = Chunk()
+    training_chunk.ParseFromString(in_file.read())
+    in_file.close()
+    print("Games in first chunk {}".format(len(training_chunk.games)))
 
 
 if __name__ == "__main__":

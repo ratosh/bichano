@@ -1,6 +1,6 @@
 use std::mem;
 
-use pgn_reader::{Outcome, RawHeader, San, SanPlus, Skip, Visitor};
+use pgn_reader::{Outcome, RawHeader, San, SanPlus, Skip, Visitor, Role};
 use shakmaty::{Chess, Color, Position, Move, Setup};
 use shakmaty::fen::Fen;
 
@@ -212,6 +212,10 @@ fn convert_outcome(outcome: Outcome) -> ResultChunk {
 
 impl GameEncoder for SimpleGameEncoder {
 
+    // Simple move encoding (16 bits):
+    // - 6 bits for move start position
+    // - 6 bits for move end position
+    // - 4 bits for promotion
     fn encode_move(&self, m: &Move, moving_color: Color) -> u32 {
         let (from, to, promotion) = match *m {
             Move::EnPassant {from, to} => {
@@ -228,7 +232,7 @@ impl GameEncoder for SimpleGameEncoder {
             }
         };
         let promotion_index = if let Some(role) = promotion {
-            u32::from(role) << 12
+            (u32::from(role) - u32::from(Role::Pawn)) << 12
         } else {
             0
         };
