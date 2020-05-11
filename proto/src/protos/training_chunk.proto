@@ -2,15 +2,6 @@ syntax = "proto2";
 
 package protos;
 
-message BoardChunk {
-  enum EncodingType {
-    SIMPLE = 0;
-  }
-
-  required EncodingType encoding = 1;
-  repeated uint64 planes = 2;
-}
-
 message PolicyChunk {
   required uint32 move_index = 1;
   required float value = 2;
@@ -19,25 +10,15 @@ message PolicyChunk {
 message PositionChunk {
 
   enum PolicyEncodingType {
-    SIMPLE = 0;
+    SIMPLE_POLICY = 0;
+  }
+  enum BoardEncodingType {
+    SIMPLE_BOARD = 0;
   }
 
-  required PolicyEncodingType encoding = 1;
-  required BoardChunk board = 2;
-  repeated PolicyChunk policy = 3;
-}
-
-message GameChunk {
-  repeated PositionChunk positions = 1;
-  optional ResultChunk result = 2;
-}
-
-enum ResultChunk {
-  WHITE = 0;
-  BLACK = 1;
-  DRAW = 2;
-}
-
-message Chunk {
-  repeated GameChunk games = 1;
+  required PolicyEncodingType policy_encoding = 1;
+  required BoardEncodingType board_encoding = 2;
+  repeated uint64 planes = 3;
+  repeated PolicyChunk policy = 4;
+  required double result = 5;
 }

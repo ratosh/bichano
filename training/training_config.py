@@ -9,7 +9,7 @@ class TrainingConfig:
     #   train_test_ratio: 0.8
     #   batch_size: 1024
     #   input: 'D:\nn\ccrl\*\'
-    #   output: 'D:\nn\training\'
+    #   output: 'D:\nn\training_output\'
     #   steps: 100000
     #   learning_rate:
     #       - 0.01

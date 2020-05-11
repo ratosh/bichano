@@ -9,7 +9,7 @@ from training_config import TrainingConfig
 
 
 def get_chunks(data_prefix):
-    return glob.glob(data_prefix + "*.chk")
+    return glob.glob(data_prefix + "*.bch")
 
 
 def get_all_chunks(path):
@@ -34,11 +34,6 @@ def train(args):
     num_train_chunks = int(len(chunks) * cfg.train_ratio)
     training_chunks = chunks[:num_train_chunks]
     test_chunks = chunks[num_train_chunks:]
-
-    in_file = open(training_chunks[0], "rb")
-    training_chunk = Chunk()
-    training_chunk.ParseFromString(in_file.read())
-    in_file.close()
     print("Games in first chunk {}".format(len(training_chunk.games)))
 
 

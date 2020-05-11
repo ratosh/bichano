@@ -1,6 +1,6 @@
 extern crate glob;
 
-use network::encoder::{SimpleGameEncoder, GameLoader, SimpleBoardEncoder, ChunkEncoder};
+use network::encoder::{SimpleGameEncoder, GameLoader, SimpleBoardEncoder, GameEncoder, Game};
 use std::fs::File;
 use protobuf::{Message};
 use std::io::Write;
@@ -12,7 +12,6 @@ use std::fs;
 fn main() {
     let path = "D:\\nn\\ccrl-pgn\\cclr";
     let input_files = format!("{}\\**\\*.pgn", path);
-    let mut input_counter = 0;
 
     for entry in glob(input_files.as_str()).expect("Failed to read") {
         match entry {
@@ -22,33 +21,43 @@ fn main() {
                 let mut reader = BufferedReader::new(file);
 
                 let mut visitor = GameLoader::default();
-                let mut chunk_counter = 0;
-                let mut chunk_encoder = ChunkEncoder::default();
+                let game_encoder = SimpleGameEncoder::default();
                 while let Some(game) = reader.read_game(&mut visitor).expect("Error") {
-                    if chunk_encoder.push(&game) {
-                        save(path, &mut chunk_encoder, input_counter, chunk_counter);
-                        chunk_counter += 1;
-                    }
+                    save(path, &game, &game_encoder);
                 }
-                save(path, &mut chunk_encoder, input_counter, chunk_counter);
-                input_counter += 1;
             }
             Err(e) => println!("{:?}", e),
         }
+        break;
     }
 }
 
-fn save(path: &str, chunk_encoder: &mut ChunkEncoder, file_index: usize, chunk_index: usize) {
-    let game_encoder = SimpleGameEncoder::default();
+fn save<T: GameEncoder>(path: &str, game: &Game, game_encoder: &T) {
     let board_encoder = SimpleBoardEncoder::default();
-    if let Some(chunk) = chunk_encoder.encode(&game_encoder, &board_encoder) {
-        let bytes = chunk.write_to_bytes().expect("game_chunk");
-        println!("len {}", bytes.len());
+    for position_chunk in game_encoder.encode(&game, &board_encoder).iter() {
+        let mut key:u64 = 0;
+        // TODO: Use zobrist key to have a better distribution
+        for (index, plane) in position_chunk.get_planes().iter().enumerate() {
+            if index < 2 {
+                continue;
+            }
+            println!("plane {:#016x}", plane);
+            key ^= *plane;
+        }
+        println!("Key {:#016x}", key);
 
-        let dir = format!("{}\\custom\\{}", path, file_index);
+        let dir = format!("{}\\custom\\{:#016x}", path, key);
         fs::create_dir_all(dir.as_str()).expect("Failed to create dir");
 
-        let file = format!("{}\\chunk_{}.chk", dir.as_str(), chunk_index);
+        // TODO: Load file and merge equal positions
+        // let input_files = format!("{}\\**\\*.bch", dir);
+        // for entry in glob(input_files.as_str()).expect("Failed to read") {
+        //
+        // }
+
+        let bytes = position_chunk.write_to_bytes().expect("encoding position");
+
+        let file = format!("{}\\pos_0.bch", dir.as_str());
         let mut buffer = File::create(file).expect("Failed to create file");
         buffer.write(&bytes).expect("Failed to push ");
     }
