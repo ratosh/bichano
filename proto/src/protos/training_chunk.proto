@@ -4,7 +4,7 @@ package protos;
 
 message PolicyChunk {
   required uint32 move_index = 1;
-  required float value = 2;
+  required uint32 times_played = 2;
 }
 
 message PositionChunk {
@@ -20,5 +20,6 @@ message PositionChunk {
   required BoardEncodingType board_encoding = 2;
   repeated uint64 planes = 3;
   repeated PolicyChunk policy = 4;
-  required double result = 5;
+  required double points = 5;
+  required uint64 games = 6;
 }

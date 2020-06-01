@@ -4,18 +4,27 @@ import glob
 import random
 import os
 
+from chunkloader import ChunkLoader
 from training_chunk_pb2 import Chunk
 from training_config import TrainingConfig
 
 
-def get_chunks(data_prefix):
-    return glob.glob(data_prefix + "*.bch")
+def get_chunks(directory):
+    print(directory)
+    files = []
+    iterator = glob.iglob(directory + "*.bch")
+    for file in iterator:
+        print(file)
+        files.append(file)
+    return files
 
 
 def get_all_chunks(path):
+    print(path)
     chunks = []
-    for d in glob.glob(path):
-        chunks += get_chunks(d)
+    iterator = glob.iglob(path)
+    for directory in iterator:
+        chunks += get_chunks(directory)
     random.shuffle(chunks)
     return chunks
 
@@ -34,11 +43,13 @@ def train(args):
     num_train_chunks = int(len(chunks) * cfg.train_ratio)
     training_chunks = chunks[:num_train_chunks]
     test_chunks = chunks[num_train_chunks:]
-    print("Games in first chunk {}".format(len(training_chunk.games)))
+    print("Chunks Training({}) Testing({})".format(len(training_chunks), len(test_chunks)))
+    train_loader = ChunkLoader(training_chunks, cfg)
+    test_loader = ChunkLoader(test_chunks, cfg)
 
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description='Tensorflow pipeline for training Leela Chess.')
+    argparser = argparse.ArgumentParser(description='Tensorflow pipeline for training.')
     argparser.add_argument('--cfg',
                            type=argparse.FileType('r'),
                            help='yaml configuration with training parameters')

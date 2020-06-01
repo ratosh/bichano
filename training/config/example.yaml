@@ -3,7 +3,7 @@ gpu: 0
 training:
   train_test_ratio: 0.8
   batch_size: 1024
-  input: 'D:\nn\ccrl\*\'
+  input: 'D:\nn\custom\**\'
   output: 'D:\nn\training'
   steps: 100000
   learning_rate:
