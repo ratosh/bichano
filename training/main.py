@@ -5,22 +5,18 @@ import random
 import os
 
 from chunkloader import ChunkLoader
-from training_chunk_pb2 import Chunk
 from training_config import TrainingConfig
 
 
 def get_chunks(directory):
-    print(directory)
     files = []
     iterator = glob.iglob(directory + "*.bch")
     for file in iterator:
-        print(file)
         files.append(file)
     return files
 
 
 def get_all_chunks(path):
-    print(path)
     chunks = []
     iterator = glob.iglob(path)
     for directory in iterator:

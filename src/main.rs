@@ -12,7 +12,7 @@ use proto::protos::training_chunk::{PositionChunk, PolicyChunk};
 use std::collections::HashMap;
 
 fn main() {
-    let path = "D:\\nn\\ccrl-pgn\\cclr";
+    let path = "D:\\nn\\ccrl-pgn\\cclr\\train";
     let input_files = format!("{}\\**\\*.pgn", path);
     let mut total_created_files = 0;
 
@@ -34,7 +34,6 @@ fn main() {
             }
             Err(e) => println!("{:?}", e),
         }
-        break;
     }
 }
 
@@ -50,9 +49,9 @@ fn save<T: GameEncoder>(path: &str, game: &Game, game_encoder: &T, total_created
             }
             key ^= *plane;
         }
-        let folder_name = (created_files + total_created_files) / 2048;
+        let folder_name = (created_files + total_created_files) / 10240;
 
-        let possible_files = format!("{}\\training\\{:X}\\**\\{:016X}.bch", path, folder_name, key);
+        let possible_files = format!("{}\\s1\\{:X}\\**\\{:016X}.bch", path, folder_name, key);
         // println!("Possible {}", possible_files);
         let mut chunk = position_chunk.clone();
         let mut new_file = true;
@@ -66,6 +65,8 @@ fn save<T: GameEncoder>(path: &str, game: &Game, game_encoder: &T, total_created
                     file.read_to_end(&mut buffer).expect("Failed to read file");
                     let mut found_chunk = PositionChunk::new();
                     found_chunk.merge_from_bytes(&buffer).expect("Protobuf parse error");
+                    chunk.set_points(chunk.get_points() + found_chunk.get_points());
+                    chunk.set_games(chunk.get_games() + found_chunk.get_games());
                     if found_chunk.get_planes().eq(position_chunk.get_planes()) {
                         chunk.set_policy(merge_policy(&chunk, found_chunk).into());
                         new_file = false;
@@ -73,8 +74,6 @@ fn save<T: GameEncoder>(path: &str, game: &Game, game_encoder: &T, total_created
                     } else {
                         file_count += 1;
                     }
-                    chunk.set_points(chunk.get_points() + found_chunk.get_points());
-                    chunk.set_games(chunk.get_games() + found_chunk.get_games());
                 },
                 Err(e) => println!("{:?}", e),
             }
@@ -85,7 +84,7 @@ fn save<T: GameEncoder>(path: &str, game: &Game, game_encoder: &T, total_created
 
         let _bytes = chunk.write_to_bytes().expect("encoding position");
 
-        let path_name = format!("{}\\training\\{:X}\\{}", path, folder_name, file_count);
+        let path_name = format!("{}\\s1\\{:X}\\{}", path, folder_name, file_count);
         fs::create_dir_all(path_name.as_str()).expect("Failed to create dir");
         let file_name = format!("{}\\{:016X}.bch", path_name, key);
         // println!("Saving file {}", file_name);

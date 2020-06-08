@@ -1,3 +1,5 @@
 wheel
 PyYaml
-google
+numpy
+protobuf
+tensorflow
