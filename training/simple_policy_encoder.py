@@ -214,18 +214,20 @@ MOVES = [
 
 class SimplePolicyEncoder:
 
-    def __init__(self, policy, games):
-        self.policies = policy
-        self.games = games
-
-    def to_numpy(self):
+    def to_numpy(self, policy_chunks):
         result = np.zeros(len(MOVES))
-        for policy in self.policies:
-            result[policy.move_index] = policy.times_played / self.games
+        total_weight = 0
+        for policy in policy_chunks:
+            total_weight += policy.weight
+        for policy in policy_chunks:
+            result[policy.move_index] = policy.weight / total_weight
         return result
 
-    def display(self):
+    def to_string(self, policy_chunks):
+        total_weight = 0
+        for policy in policy_chunks:
+            total_weight += policy.weight
         output = "POLICY\n"
-        for policy in self.policies:
-            output += "{} {:4.1f}\n".format(MOVES[policy.move_index], 100 * policy.times_played / self.games)
+        for policy in policy_chunks:
+            output += "{} {:4.1f}\n".format(MOVES[policy.move_index], 100 * policy.weight / total_weight)
         return output

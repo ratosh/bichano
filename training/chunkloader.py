@@ -19,7 +19,7 @@ class ChunkLoader:
     def batch_output(self, input):
         input_planes = np.unpackbits(np.frombuffer(input.planes, dtype=np.uint8)).astype(np.float32)
         policy = np.array(ndim=1858, dtype=np.float32)
-        for policy_entry in input.position_chunk.policy:
+        for policy_entry in input.game_chunk.policy:
             np.put(policy, policy_entry.move_index, policy_entry.times_played / input.games)
         winner = np.unpackbits(input.points / input.games, dtype=np.float32)
         return input_planes, policy, winner

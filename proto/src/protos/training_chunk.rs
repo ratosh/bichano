@@ -30,7 +30,7 @@ use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 pub struct PolicyChunk {
     // message fields
     move_index: ::std::option::Option<u32>,
-    times_played: ::std::option::Option<u32>,
+    weight: ::std::option::Option<u32>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -66,23 +66,23 @@ impl PolicyChunk {
         self.move_index = ::std::option::Option::Some(v);
     }
 
-    // required uint32 times_played = 2;
+    // required uint32 weight = 2;
 
 
-    pub fn get_times_played(&self) -> u32 {
-        self.times_played.unwrap_or(0)
+    pub fn get_weight(&self) -> u32 {
+        self.weight.unwrap_or(0)
     }
-    pub fn clear_times_played(&mut self) {
-        self.times_played = ::std::option::Option::None;
+    pub fn clear_weight(&mut self) {
+        self.weight = ::std::option::Option::None;
     }
 
-    pub fn has_times_played(&self) -> bool {
-        self.times_played.is_some()
+    pub fn has_weight(&self) -> bool {
+        self.weight.is_some()
     }
 
     // Param is passed by value, moved
-    pub fn set_times_played(&mut self, v: u32) {
-        self.times_played = ::std::option::Option::Some(v);
+    pub fn set_weight(&mut self, v: u32) {
+        self.weight = ::std::option::Option::Some(v);
     }
 }
 
@@ -91,7 +91,7 @@ impl ::protobuf::Message for PolicyChunk {
         if self.move_index.is_none() {
             return false;
         }
-        if self.times_played.is_none() {
+        if self.weight.is_none() {
             return false;
         }
         true
@@ -113,7 +113,7 @@ impl ::protobuf::Message for PolicyChunk {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
                     let tmp = is.read_uint32()?;
-                    self.times_played = ::std::option::Option::Some(tmp);
+                    self.weight = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -130,7 +130,7 @@ impl ::protobuf::Message for PolicyChunk {
         if let Some(v) = self.move_index {
             my_size += ::protobuf::rt::value_size(1, v, ::protobuf::wire_format::WireTypeVarint);
         }
-        if let Some(v) = self.times_played {
+        if let Some(v) = self.weight {
             my_size += ::protobuf::rt::value_size(2, v, ::protobuf::wire_format::WireTypeVarint);
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
@@ -142,7 +142,7 @@ impl ::protobuf::Message for PolicyChunk {
         if let Some(v) = self.move_index {
             os.write_uint32(1, v)?;
         }
-        if let Some(v) = self.times_played {
+        if let Some(v) = self.weight {
             os.write_uint32(2, v)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
@@ -190,9 +190,9 @@ impl ::protobuf::Message for PolicyChunk {
                     |m: &mut PolicyChunk| { &mut m.move_index },
                 ));
                 fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeUint32>(
-                    "times_played",
-                    |m: &PolicyChunk| { &m.times_played },
-                    |m: &mut PolicyChunk| { &mut m.times_played },
+                    "weight",
+                    |m: &PolicyChunk| { &m.weight },
+                    |m: &mut PolicyChunk| { &mut m.weight },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new_pb_name::<PolicyChunk>(
                     "PolicyChunk",
@@ -214,7 +214,7 @@ impl ::protobuf::Message for PolicyChunk {
 impl ::protobuf::Clear for PolicyChunk {
     fn clear(&mut self) {
         self.move_index = ::std::option::Option::None;
-        self.times_played = ::std::option::Option::None;
+        self.weight = ::std::option::Option::None;
         self.unknown_fields.clear();
     }
 }
@@ -234,12 +234,8 @@ impl ::protobuf::reflect::ProtobufValue for PolicyChunk {
 #[derive(PartialEq,Clone,Default)]
 pub struct PositionChunk {
     // message fields
-    policy_encoding: ::std::option::Option<PositionChunk_PolicyEncodingType>,
-    board_encoding: ::std::option::Option<PositionChunk_BoardEncodingType>,
     planes: ::std::vec::Vec<u64>,
     policy: ::protobuf::RepeatedField<PolicyChunk>,
-    points: ::std::option::Option<f64>,
-    games: ::std::option::Option<u64>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -254,44 +250,6 @@ impl<'a> ::std::default::Default for &'a PositionChunk {
 impl PositionChunk {
     pub fn new() -> PositionChunk {
         ::std::default::Default::default()
-    }
-
-    // required .protos.PositionChunk.PolicyEncodingType policy_encoding = 1;
-
-
-    pub fn get_policy_encoding(&self) -> PositionChunk_PolicyEncodingType {
-        self.policy_encoding.unwrap_or(PositionChunk_PolicyEncodingType::SIMPLE_POLICY)
-    }
-    pub fn clear_policy_encoding(&mut self) {
-        self.policy_encoding = ::std::option::Option::None;
-    }
-
-    pub fn has_policy_encoding(&self) -> bool {
-        self.policy_encoding.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_policy_encoding(&mut self, v: PositionChunk_PolicyEncodingType) {
-        self.policy_encoding = ::std::option::Option::Some(v);
-    }
-
-    // required .protos.PositionChunk.BoardEncodingType board_encoding = 2;
-
-
-    pub fn get_board_encoding(&self) -> PositionChunk_BoardEncodingType {
-        self.board_encoding.unwrap_or(PositionChunk_BoardEncodingType::SIMPLE_BOARD)
-    }
-    pub fn clear_board_encoding(&mut self) {
-        self.board_encoding = ::std::option::Option::None;
-    }
-
-    pub fn has_board_encoding(&self) -> bool {
-        self.board_encoding.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_board_encoding(&mut self, v: PositionChunk_BoardEncodingType) {
-        self.board_encoding = ::std::option::Option::Some(v);
     }
 
     // repeated uint64 planes = 3;
@@ -343,60 +301,10 @@ impl PositionChunk {
     pub fn take_policy(&mut self) -> ::protobuf::RepeatedField<PolicyChunk> {
         ::std::mem::replace(&mut self.policy, ::protobuf::RepeatedField::new())
     }
-
-    // required double points = 5;
-
-
-    pub fn get_points(&self) -> f64 {
-        self.points.unwrap_or(0.)
-    }
-    pub fn clear_points(&mut self) {
-        self.points = ::std::option::Option::None;
-    }
-
-    pub fn has_points(&self) -> bool {
-        self.points.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_points(&mut self, v: f64) {
-        self.points = ::std::option::Option::Some(v);
-    }
-
-    // required uint64 games = 6;
-
-
-    pub fn get_games(&self) -> u64 {
-        self.games.unwrap_or(0)
-    }
-    pub fn clear_games(&mut self) {
-        self.games = ::std::option::Option::None;
-    }
-
-    pub fn has_games(&self) -> bool {
-        self.games.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_games(&mut self, v: u64) {
-        self.games = ::std::option::Option::Some(v);
-    }
 }
 
 impl ::protobuf::Message for PositionChunk {
     fn is_initialized(&self) -> bool {
-        if self.policy_encoding.is_none() {
-            return false;
-        }
-        if self.board_encoding.is_none() {
-            return false;
-        }
-        if self.points.is_none() {
-            return false;
-        }
-        if self.games.is_none() {
-            return false;
-        }
         for v in &self.policy {
             if !v.is_initialized() {
                 return false;
@@ -409,31 +317,11 @@ impl ::protobuf::Message for PositionChunk {
         while !is.eof()? {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
-                1 => {
-                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.policy_encoding, 1, &mut self.unknown_fields)?
-                },
-                2 => {
-                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.board_encoding, 2, &mut self.unknown_fields)?
-                },
                 3 => {
                     ::protobuf::rt::read_repeated_uint64_into(wire_type, is, &mut self.planes)?;
                 },
                 4 => {
                     ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.policy)?;
-                },
-                5 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeFixed64 {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_double()?;
-                    self.points = ::std::option::Option::Some(tmp);
-                },
-                6 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_uint64()?;
-                    self.games = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -447,12 +335,6 @@ impl ::protobuf::Message for PositionChunk {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        if let Some(v) = self.policy_encoding {
-            my_size += ::protobuf::rt::enum_size(1, v);
-        }
-        if let Some(v) = self.board_encoding {
-            my_size += ::protobuf::rt::enum_size(2, v);
-        }
         for value in &self.planes {
             my_size += ::protobuf::rt::value_size(3, *value, ::protobuf::wire_format::WireTypeVarint);
         };
@@ -460,24 +342,12 @@ impl ::protobuf::Message for PositionChunk {
             let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
-        if let Some(v) = self.points {
-            my_size += 9;
-        }
-        if let Some(v) = self.games {
-            my_size += ::protobuf::rt::value_size(6, v, ::protobuf::wire_format::WireTypeVarint);
-        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if let Some(v) = self.policy_encoding {
-            os.write_enum(1, v.value())?;
-        }
-        if let Some(v) = self.board_encoding {
-            os.write_enum(2, v.value())?;
-        }
         for v in &self.planes {
             os.write_uint64(3, *v)?;
         };
@@ -486,12 +356,6 @@ impl ::protobuf::Message for PositionChunk {
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         };
-        if let Some(v) = self.points {
-            os.write_double(5, v)?;
-        }
-        if let Some(v) = self.games {
-            os.write_uint64(6, v)?;
-        }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -531,16 +395,6 @@ impl ::protobuf::Message for PositionChunk {
         unsafe {
             descriptor.get(|| {
                 let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<PositionChunk_PolicyEncodingType>>(
-                    "policy_encoding",
-                    |m: &PositionChunk| { &m.policy_encoding },
-                    |m: &mut PositionChunk| { &mut m.policy_encoding },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<PositionChunk_BoardEncodingType>>(
-                    "board_encoding",
-                    |m: &PositionChunk| { &m.board_encoding },
-                    |m: &mut PositionChunk| { &mut m.board_encoding },
-                ));
                 fields.push(::protobuf::reflect::accessor::make_vec_accessor::<_, ::protobuf::types::ProtobufTypeUint64>(
                     "planes",
                     |m: &PositionChunk| { &m.planes },
@@ -550,16 +404,6 @@ impl ::protobuf::Message for PositionChunk {
                     "policy",
                     |m: &PositionChunk| { &m.policy },
                     |m: &mut PositionChunk| { &mut m.policy },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeDouble>(
-                    "points",
-                    |m: &PositionChunk| { &m.points },
-                    |m: &mut PositionChunk| { &mut m.points },
-                ));
-                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeUint64>(
-                    "games",
-                    |m: &PositionChunk| { &m.games },
-                    |m: &mut PositionChunk| { &mut m.games },
                 ));
                 ::protobuf::reflect::MessageDescriptor::new_pb_name::<PositionChunk>(
                     "PositionChunk",
@@ -580,12 +424,8 @@ impl ::protobuf::Message for PositionChunk {
 
 impl ::protobuf::Clear for PositionChunk {
     fn clear(&mut self) {
-        self.policy_encoding = ::std::option::Option::None;
-        self.board_encoding = ::std::option::Option::None;
         self.planes.clear();
         self.policy.clear();
-        self.points = ::std::option::Option::None;
-        self.games = ::std::option::Option::None;
         self.unknown_fields.clear();
     }
 }
@@ -602,26 +442,314 @@ impl ::protobuf::reflect::ProtobufValue for PositionChunk {
     }
 }
 
+#[derive(PartialEq,Clone,Default)]
+pub struct GameChunk {
+    // message fields
+    policy_encoding: ::std::option::Option<GameChunk_PolicyEncodingType>,
+    board_encoding: ::std::option::Option<GameChunk_BoardEncodingType>,
+    positions: ::protobuf::RepeatedField<PositionChunk>,
+    result: ::std::option::Option<f64>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a GameChunk {
+    fn default() -> &'a GameChunk {
+        <GameChunk as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl GameChunk {
+    pub fn new() -> GameChunk {
+        ::std::default::Default::default()
+    }
+
+    // required .protos.GameChunk.PolicyEncodingType policy_encoding = 1;
+
+
+    pub fn get_policy_encoding(&self) -> GameChunk_PolicyEncodingType {
+        self.policy_encoding.unwrap_or(GameChunk_PolicyEncodingType::SIMPLE_POLICY)
+    }
+    pub fn clear_policy_encoding(&mut self) {
+        self.policy_encoding = ::std::option::Option::None;
+    }
+
+    pub fn has_policy_encoding(&self) -> bool {
+        self.policy_encoding.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_policy_encoding(&mut self, v: GameChunk_PolicyEncodingType) {
+        self.policy_encoding = ::std::option::Option::Some(v);
+    }
+
+    // required .protos.GameChunk.BoardEncodingType board_encoding = 2;
+
+
+    pub fn get_board_encoding(&self) -> GameChunk_BoardEncodingType {
+        self.board_encoding.unwrap_or(GameChunk_BoardEncodingType::SIMPLE_BOARD)
+    }
+    pub fn clear_board_encoding(&mut self) {
+        self.board_encoding = ::std::option::Option::None;
+    }
+
+    pub fn has_board_encoding(&self) -> bool {
+        self.board_encoding.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_board_encoding(&mut self, v: GameChunk_BoardEncodingType) {
+        self.board_encoding = ::std::option::Option::Some(v);
+    }
+
+    // repeated .protos.PositionChunk positions = 3;
+
+
+    pub fn get_positions(&self) -> &[PositionChunk] {
+        &self.positions
+    }
+    pub fn clear_positions(&mut self) {
+        self.positions.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_positions(&mut self, v: ::protobuf::RepeatedField<PositionChunk>) {
+        self.positions = v;
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_positions(&mut self) -> &mut ::protobuf::RepeatedField<PositionChunk> {
+        &mut self.positions
+    }
+
+    // Take field
+    pub fn take_positions(&mut self) -> ::protobuf::RepeatedField<PositionChunk> {
+        ::std::mem::replace(&mut self.positions, ::protobuf::RepeatedField::new())
+    }
+
+    // required double result = 4;
+
+
+    pub fn get_result(&self) -> f64 {
+        self.result.unwrap_or(0.)
+    }
+    pub fn clear_result(&mut self) {
+        self.result = ::std::option::Option::None;
+    }
+
+    pub fn has_result(&self) -> bool {
+        self.result.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_result(&mut self, v: f64) {
+        self.result = ::std::option::Option::Some(v);
+    }
+}
+
+impl ::protobuf::Message for GameChunk {
+    fn is_initialized(&self) -> bool {
+        if self.policy_encoding.is_none() {
+            return false;
+        }
+        if self.board_encoding.is_none() {
+            return false;
+        }
+        if self.result.is_none() {
+            return false;
+        }
+        for v in &self.positions {
+            if !v.is_initialized() {
+                return false;
+            }
+        };
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.policy_encoding, 1, &mut self.unknown_fields)?
+                },
+                2 => {
+                    ::protobuf::rt::read_proto2_enum_with_unknown_fields_into(wire_type, is, &mut self.board_encoding, 2, &mut self.unknown_fields)?
+                },
+                3 => {
+                    ::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.positions)?;
+                },
+                4 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeFixed64 {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_double()?;
+                    self.result = ::std::option::Option::Some(tmp);
+                },
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        if let Some(v) = self.policy_encoding {
+            my_size += ::protobuf::rt::enum_size(1, v);
+        }
+        if let Some(v) = self.board_encoding {
+            my_size += ::protobuf::rt::enum_size(2, v);
+        }
+        for value in &self.positions {
+            let len = value.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        };
+        if let Some(v) = self.result {
+            my_size += 9;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if let Some(v) = self.policy_encoding {
+            os.write_enum(1, v.value())?;
+        }
+        if let Some(v) = self.board_encoding {
+            os.write_enum(2, v.value())?;
+        }
+        for v in &self.positions {
+            os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        };
+        if let Some(v) = self.result {
+            os.write_double(4, v)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> GameChunk {
+        GameChunk::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            descriptor.get(|| {
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<GameChunk_PolicyEncodingType>>(
+                    "policy_encoding",
+                    |m: &GameChunk| { &m.policy_encoding },
+                    |m: &mut GameChunk| { &mut m.policy_encoding },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeEnum<GameChunk_BoardEncodingType>>(
+                    "board_encoding",
+                    |m: &GameChunk| { &m.board_encoding },
+                    |m: &mut GameChunk| { &mut m.board_encoding },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<PositionChunk>>(
+                    "positions",
+                    |m: &GameChunk| { &m.positions },
+                    |m: &mut GameChunk| { &mut m.positions },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_option_accessor::<_, ::protobuf::types::ProtobufTypeDouble>(
+                    "result",
+                    |m: &GameChunk| { &m.result },
+                    |m: &mut GameChunk| { &mut m.result },
+                ));
+                ::protobuf::reflect::MessageDescriptor::new_pb_name::<GameChunk>(
+                    "GameChunk",
+                    fields,
+                    file_descriptor_proto()
+                )
+            })
+        }
+    }
+
+    fn default_instance() -> &'static GameChunk {
+        static mut instance: ::protobuf::lazy::Lazy<GameChunk> = ::protobuf::lazy::Lazy::INIT;
+        unsafe {
+            instance.get(GameChunk::new)
+        }
+    }
+}
+
+impl ::protobuf::Clear for GameChunk {
+    fn clear(&mut self) {
+        self.policy_encoding = ::std::option::Option::None;
+        self.board_encoding = ::std::option::Option::None;
+        self.positions.clear();
+        self.result = ::std::option::Option::None;
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for GameChunk {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for GameChunk {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
 #[derive(Clone,PartialEq,Eq,Debug,Hash)]
-pub enum PositionChunk_PolicyEncodingType {
+pub enum GameChunk_PolicyEncodingType {
     SIMPLE_POLICY = 0,
 }
 
-impl ::protobuf::ProtobufEnum for PositionChunk_PolicyEncodingType {
+impl ::protobuf::ProtobufEnum for GameChunk_PolicyEncodingType {
     fn value(&self) -> i32 {
         *self as i32
     }
 
-    fn from_i32(value: i32) -> ::std::option::Option<PositionChunk_PolicyEncodingType> {
+    fn from_i32(value: i32) -> ::std::option::Option<GameChunk_PolicyEncodingType> {
         match value {
-            0 => ::std::option::Option::Some(PositionChunk_PolicyEncodingType::SIMPLE_POLICY),
+            0 => ::std::option::Option::Some(GameChunk_PolicyEncodingType::SIMPLE_POLICY),
             _ => ::std::option::Option::None
         }
     }
 
     fn values() -> &'static [Self] {
-        static values: &'static [PositionChunk_PolicyEncodingType] = &[
-            PositionChunk_PolicyEncodingType::SIMPLE_POLICY,
+        static values: &'static [GameChunk_PolicyEncodingType] = &[
+            GameChunk_PolicyEncodingType::SIMPLE_POLICY,
         ];
         values
     }
@@ -630,47 +758,47 @@ impl ::protobuf::ProtobufEnum for PositionChunk_PolicyEncodingType {
         static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::lazy::Lazy::INIT;
         unsafe {
             descriptor.get(|| {
-                ::protobuf::reflect::EnumDescriptor::new_pb_name::<PositionChunk_PolicyEncodingType>("PositionChunk.PolicyEncodingType", file_descriptor_proto())
+                ::protobuf::reflect::EnumDescriptor::new_pb_name::<GameChunk_PolicyEncodingType>("GameChunk.PolicyEncodingType", file_descriptor_proto())
             })
         }
     }
 }
 
-impl ::std::marker::Copy for PositionChunk_PolicyEncodingType {
+impl ::std::marker::Copy for GameChunk_PolicyEncodingType {
 }
 
-impl ::std::default::Default for PositionChunk_PolicyEncodingType {
+impl ::std::default::Default for GameChunk_PolicyEncodingType {
     fn default() -> Self {
-        PositionChunk_PolicyEncodingType::SIMPLE_POLICY
+        GameChunk_PolicyEncodingType::SIMPLE_POLICY
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for PositionChunk_PolicyEncodingType {
+impl ::protobuf::reflect::ProtobufValue for GameChunk_PolicyEncodingType {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Enum(self.descriptor())
     }
 }
 
 #[derive(Clone,PartialEq,Eq,Debug,Hash)]
-pub enum PositionChunk_BoardEncodingType {
+pub enum GameChunk_BoardEncodingType {
     SIMPLE_BOARD = 0,
 }
 
-impl ::protobuf::ProtobufEnum for PositionChunk_BoardEncodingType {
+impl ::protobuf::ProtobufEnum for GameChunk_BoardEncodingType {
     fn value(&self) -> i32 {
         *self as i32
     }
 
-    fn from_i32(value: i32) -> ::std::option::Option<PositionChunk_BoardEncodingType> {
+    fn from_i32(value: i32) -> ::std::option::Option<GameChunk_BoardEncodingType> {
         match value {
-            0 => ::std::option::Option::Some(PositionChunk_BoardEncodingType::SIMPLE_BOARD),
+            0 => ::std::option::Option::Some(GameChunk_BoardEncodingType::SIMPLE_BOARD),
             _ => ::std::option::Option::None
         }
     }
 
     fn values() -> &'static [Self] {
-        static values: &'static [PositionChunk_BoardEncodingType] = &[
-            PositionChunk_BoardEncodingType::SIMPLE_BOARD,
+        static values: &'static [GameChunk_BoardEncodingType] = &[
+            GameChunk_BoardEncodingType::SIMPLE_BOARD,
         ];
         values
     }
@@ -679,39 +807,39 @@ impl ::protobuf::ProtobufEnum for PositionChunk_BoardEncodingType {
         static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::lazy::Lazy::INIT;
         unsafe {
             descriptor.get(|| {
-                ::protobuf::reflect::EnumDescriptor::new_pb_name::<PositionChunk_BoardEncodingType>("PositionChunk.BoardEncodingType", file_descriptor_proto())
+                ::protobuf::reflect::EnumDescriptor::new_pb_name::<GameChunk_BoardEncodingType>("GameChunk.BoardEncodingType", file_descriptor_proto())
             })
         }
     }
 }
 
-impl ::std::marker::Copy for PositionChunk_BoardEncodingType {
+impl ::std::marker::Copy for GameChunk_BoardEncodingType {
 }
 
-impl ::std::default::Default for PositionChunk_BoardEncodingType {
+impl ::std::default::Default for GameChunk_BoardEncodingType {
     fn default() -> Self {
-        PositionChunk_BoardEncodingType::SIMPLE_BOARD
+        GameChunk_BoardEncodingType::SIMPLE_BOARD
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for PositionChunk_BoardEncodingType {
+impl ::protobuf::reflect::ProtobufValue for GameChunk_BoardEncodingType {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Enum(self.descriptor())
     }
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x14training_chunk.proto\x12\x06protos\"O\n\x0bPolicyChunk\x12\x1d\n\n\
-    move_index\x18\x01\x20\x02(\rR\tmoveIndex\x12!\n\x0ctimes_played\x18\x02\
-    \x20\x02(\rR\x0btimesPlayed\"\xf5\x02\n\rPositionChunk\x12Q\n\x0fpolicy_\
-    encoding\x18\x01\x20\x02(\x0e2(.protos.PositionChunk.PolicyEncodingTypeR\
-    \x0epolicyEncoding\x12N\n\x0eboard_encoding\x18\x02\x20\x02(\x0e2'.proto\
-    s.PositionChunk.BoardEncodingTypeR\rboardEncoding\x12\x16\n\x06planes\
-    \x18\x03\x20\x03(\x04R\x06planes\x12+\n\x06policy\x18\x04\x20\x03(\x0b2\
-    \x13.protos.PolicyChunkR\x06policy\x12\x16\n\x06points\x18\x05\x20\x02(\
-    \x01R\x06points\x12\x14\n\x05games\x18\x06\x20\x02(\x04R\x05games\"'\n\
-    \x12PolicyEncodingType\x12\x11\n\rSIMPLE_POLICY\x10\0\"%\n\x11BoardEncod\
-    ingType\x12\x10\n\x0cSIMPLE_BOARD\x10\0\
+    \n\x14training_chunk.proto\x12\x06protos\"D\n\x0bPolicyChunk\x12\x1d\n\n\
+    move_index\x18\x01\x20\x02(\rR\tmoveIndex\x12\x16\n\x06weight\x18\x02\
+    \x20\x02(\rR\x06weight\"T\n\rPositionChunk\x12\x16\n\x06planes\x18\x03\
+    \x20\x03(\x04R\x06planes\x12+\n\x06policy\x18\x04\x20\x03(\x0b2\x13.prot\
+    os.PolicyChunkR\x06policy\"\xc3\x02\n\tGameChunk\x12M\n\x0fpolicy_encodi\
+    ng\x18\x01\x20\x02(\x0e2$.protos.GameChunk.PolicyEncodingTypeR\x0epolicy\
+    Encoding\x12J\n\x0eboard_encoding\x18\x02\x20\x02(\x0e2#.protos.GameChun\
+    k.BoardEncodingTypeR\rboardEncoding\x123\n\tpositions\x18\x03\x20\x03(\
+    \x0b2\x15.protos.PositionChunkR\tpositions\x12\x16\n\x06result\x18\x04\
+    \x20\x02(\x01R\x06result\"'\n\x12PolicyEncodingType\x12\x11\n\rSIMPLE_PO\
+    LICY\x10\0\"%\n\x11BoardEncodingType\x12\x10\n\x0cSIMPLE_BOARD\x10\0\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy::INIT;
