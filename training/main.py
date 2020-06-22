@@ -4,7 +4,8 @@ import glob
 import random
 import os
 
-from chunkloader import ChunkLoader
+from batch_loader import BatchLoader
+from tensor_worker import TensorWorker
 from training_config import TrainingConfig
 
 
@@ -35,13 +36,15 @@ def train(args):
         os.makedirs(output_dir)
 
     chunks = get_all_chunks(cfg.input)
-    print("Found {} chunk files".format(len(chunks)))
+    print("Found {} files".format(len(chunks)))
     num_train_chunks = int(len(chunks) * cfg.train_ratio)
     training_chunks = chunks[:num_train_chunks]
     test_chunks = chunks[num_train_chunks:]
     print("Chunks Training({}) Testing({})".format(len(training_chunks), len(test_chunks)))
-    train_loader = ChunkLoader(training_chunks, cfg)
-    test_loader = ChunkLoader(test_chunks, cfg)
+    train_loader = BatchLoader(training_chunks, cfg)
+    test_loader = BatchLoader(test_chunks, cfg)
+    worker = TensorWorker(cfg, train_loader, test_loader)
+    print()
 
 
 if __name__ == "__main__":

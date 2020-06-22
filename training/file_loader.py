@@ -1,5 +1,4 @@
 import argparse
-import numpy as np
 
 from simple_board_encoder import SimpleBoardEncoder
 from simple_policy_encoder import SimplePolicyEncoder
@@ -9,8 +8,6 @@ from training_chunk_pb2 import GameChunk
 class FileLoader:
 
     def __init__(self, file):
-        self.current_index = 0
-        print("Loading {} file".format(file))
         in_file = open(file, "rb")
         self.game_chunk = GameChunk.FromString(in_file.read())
         in_file.close()
@@ -20,7 +17,6 @@ class FileLoader:
             self.policy_encoder = SimplePolicyEncoder()
 
     def next(self):
-        self.current_index += 1
         for position in self.game_chunk.positions:
             yield position.planes, position.policy
 

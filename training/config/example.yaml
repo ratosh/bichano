@@ -2,8 +2,8 @@ name: 'name'
 gpu: 0
 training:
   train_test_ratio: 0.8
-  batch_size: 1024
-  input: 'D:\nn\s1\0\**\'
+  batch_size: 8192
+  input: 'D:\nn\s1\0000000000000000\'
   output: 'D:\nn\training'
   steps: 100000
   learning_rate:
@@ -16,3 +16,5 @@ training:
 model:
   filters: 64
   blocks: 6
+  kernel_size: 3
+  se_ratio: 4

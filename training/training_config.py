@@ -21,6 +21,7 @@ class TrainingConfig:
     # model:
     #   filters: 64
     #   blocks: 6
+    #   kernel_size: 3
     # ...
     def __init__(self, yaml_file):
         self.gpu = yaml_file['gpu']
@@ -32,4 +33,5 @@ class TrainingConfig:
         self.lr = yaml_file['training'].get('learning_rate', [0.01, 0.001, 0.0001])
         self.lr_bounds = yaml_file['training'].get('learning_rate_bounds', [50000, 70000])
         self.filters = yaml_file['model'].get('filters', 64)
-        self.blocks = yaml_file['training'].get('blocks', 6)
+        self.blocks = yaml_file['model'].get('blocks', 6)
+        self.kernel_size = yaml_file['model'].get('kernel_size', 3)
